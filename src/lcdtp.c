@@ -81,12 +81,12 @@ const char PART6[8] = {
 
 // Viento
 const char PART7[8] = {
-		0b00000,
 		0b01110,
 		0b01010,
 		0b01010,
+		0b01010,
 		0b01110,
-		0b11101,
+		0b10111,
 		0b01110,
 		0b00000
 };
@@ -145,72 +145,123 @@ void LCDhome(void){
 	lcdData(PART3_CHAR);
 	lcdData(PART4_CHAR);
 
-delayInaccurateMs(200);
-lcdClear();
 
-lcdGoToXY( 0, 0 );
-lcdSendStringRaw( "BIENVENIDOS AL" );
-//lcdSendFloat(10,3);
-//lcdSendInt(10);
+	delayInaccurateMs(200);
+	lcdClear();
 
-lcdGoToXY( 0, 1 );
-lcdSendStringRaw( "PROYECTO" );
+	lcdGoToXY( 0, 0 );
+	lcdSendStringRaw( "BIENVENIDOS AL" );
+	//lcdSendFloat(10,3);
+	//lcdSendInt(10);
 
-lcdData(PART5_CHAR);
+	lcdGoToXY( 0, 1 );
+	lcdSendStringRaw( "PROYECTO" );
 
-
-lcdGoToXY( 11, 1 );
-lcdData(PART1_CHAR);
-//lcdData(PART7_CHAR);
-lcdData(PART2_CHAR);
-lcdData(PART3_CHAR);
-lcdData(PART4_CHAR);
-
-delayInaccurateMs(200);
-lcdClear();
-
-lcdGoToXY( 0, 0 );
-lcdSendStringRaw( "BIENVENIDOS AL" );
-
-lcdGoToXY( 0, 1 );
-lcdSendStringRaw( "PROYECTO" );
-
-lcdData(PART5_CHAR);
-lcdData(PART5_CHAR);
-
-lcdGoToXY( 11, 1 );
-lcdData(PART1_CHAR);
-//lcdData(PART7_CHAR);
-lcdData(PART2_CHAR);
-lcdData(PART3_CHAR);
-lcdData(PART4_CHAR);
+	lcdData(PART5_CHAR);
 
 
-delayInaccurateMs(200);
+	lcdGoToXY( 11, 1 );
+	lcdData(PART1_CHAR);
+	//lcdData(PART7_CHAR);
+	lcdData(PART2_CHAR);
+	lcdData(PART3_CHAR);
+	lcdData(PART4_CHAR);
 
-lcdClear();
+	//vTaskDelay(200/portTICK_RATE_MS);
+	delayInaccurateMs(200);
+	lcdClear();
 
-lcdGoToXY( 0, 0 );
-lcdSendStringRaw( "BIENVENIDOS AL" );
+	lcdGoToXY( 0, 0 );
+	lcdSendStringRaw( "BIENVENIDOS AL" );
 
-lcdGoToXY( 0, 1 );
-lcdSendStringRaw( "PROYECTO" );
+	lcdGoToXY( 0, 1 );
+	lcdSendStringRaw( "PROYECTO" );
 
-lcdData(PART5_CHAR);
-lcdData(PART5_CHAR);
-lcdData(PART5_CHAR);
+	lcdData(PART5_CHAR);
+	lcdData(PART5_CHAR);
 
-lcdGoToXY( 11, 1 );
-lcdData(PART1_CHAR);
-//lcdData(PART7_CHAR);
-lcdData(PART2_CHAR);
-lcdData(PART3_CHAR);
-lcdData(PART4_CHAR);
+	lcdGoToXY( 11, 1 );
+	lcdData(PART1_CHAR);
+	//lcdData(PART7_CHAR);
+	lcdData(PART2_CHAR);
+	lcdData(PART3_CHAR);
+	lcdData(PART4_CHAR);
 
 
-delayInaccurateMs(200);
+	delayInaccurateMs(200);
 
-lcdClear();
+	lcdClear();
+
+	lcdGoToXY( 0, 0 );
+	lcdSendStringRaw( "BIENVENIDOS AL" );
+
+	lcdGoToXY( 0, 1 );
+	lcdSendStringRaw( "PROYECTO" );
+
+	lcdData(PART5_CHAR);
+	lcdData(PART5_CHAR);
+	lcdData(PART5_CHAR);
+
+	lcdGoToXY( 11, 1 );
+	lcdData(PART1_CHAR);
+	//lcdData(PART7_CHAR);
+	lcdData(PART2_CHAR);
+	lcdData(PART3_CHAR);
+	lcdData(PART4_CHAR);
+
+
+	delayInaccurateMs(200);
+
+
 
 
 }
+
+
+void LCDP1(void)
+{
+
+	lcdClear();
+	lcdGoToXY( 0, 0 );
+	lcdSendStringRaw( "MEDICION DE " );
+
+	lcdGoToXY( 0, 1 );
+	lcdSendStringRaw( "TEMP CORPORAL " );
+	lcdData(PART7_CHAR);
+
+
+
+}
+
+
+void LCDP2(void)
+{
+
+	lcdClear();
+	lcdGoToXY( 0, 0 );
+	lcdSendStringRaw( "MEDICION DE" );
+
+	lcdGoToXY( 0, 1 );
+	lcdSendStringRaw( "FREC CARDIACA " );
+	lcdData(PART6_CHAR);
+
+
+
+}
+
+
+void LCDP3(void)
+{
+
+	lcdClear();
+	lcdGoToXY( 0, 0 );
+	lcdSendStringRaw( "CONFIGURACION DE" );
+
+	lcdGoToXY( 0, 1 );
+	lcdSendStringRaw( "SENSOR " );
+
+
+}
+
+
+

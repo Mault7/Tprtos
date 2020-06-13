@@ -138,12 +138,13 @@ void Tecla( void* taskParmPtr )
 
 */
 
-							NVIC_EnableIRQ(PIN_INT0_IRQn);
-							NVIC_EnableIRQ(PIN_INT2_IRQn);
-							NVIC_EnableIRQ(PIN_INT4_IRQn);
-							NVIC_EnableIRQ(PIN_INT6_IRQn);
+
 					}
 				}
+				NVIC_EnableIRQ(PIN_INT0_IRQn);
+				NVIC_EnableIRQ(PIN_INT2_IRQn);
+				NVIC_EnableIRQ(PIN_INT4_IRQn);
+				NVIC_EnableIRQ(PIN_INT6_IRQn);
 				break;
 
 			case DOWN:
@@ -164,13 +165,13 @@ void Tecla( void* taskParmPtr )
 						}
 
 */
-						NVIC_EnableIRQ(PIN_INT1_IRQn);
-						NVIC_EnableIRQ(PIN_INT3_IRQn);
-						NVIC_EnableIRQ(PIN_INT5_IRQn);
-						NVIC_EnableIRQ(PIN_INT7_IRQn);
 						xQueueSend(Cola_Lecturas, &Lectura, portMAX_DELAY);
 					}
 				}
+				NVIC_EnableIRQ(PIN_INT1_IRQn);
+				NVIC_EnableIRQ(PIN_INT3_IRQn);
+				NVIC_EnableIRQ(PIN_INT5_IRQn);
+				NVIC_EnableIRQ(PIN_INT7_IRQn);
 				break;
 
 			default:

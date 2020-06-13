@@ -14,7 +14,9 @@
 
 void LCDinit(void );
 void LCDhome(void);
-
+void LCDP1(void);
+void LCDP2(void);
+void LCDP3(void);
 
 
 #endif /* PROGRAMAS_TPPROTOCOLOS_INC_LCDTP_H_ */

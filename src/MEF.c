@@ -12,6 +12,7 @@
 #include "board.h"
 #include "interrupciones.h"
 #include "MEF.h"
+#include "lcdtp.h"
 
 
 static void actualizarsalidas(MEF_t * pMEF);
@@ -20,7 +21,7 @@ static void actualizarsalidas(MEF_t * pMEF);
 void controlMEFInit(MEF_t * pMEF){
 	pMEF->state=PHOME;
 	gpioWrite(LEDR, ON);
-	//pFunct = funcionHome;
+	pFunct = LCDhome;
 }
 
 
@@ -150,7 +151,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 	{
 	case PHOME:
 
-
+		pFunct = LCDhome;
 		gpioWrite(LEDR,ON);
 		gpioWrite(LEDG,OFF);
 		gpioWrite(LEDB,OFF);
@@ -162,6 +163,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 		break;
 	case SET_P1:
 
+		pFunct = LCDP1;
 
 		gpioWrite(LEDG,ON);
 		gpioWrite(LEDR,OFF);
@@ -175,7 +177,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 
 	case SET_P2:
 
-
+		pFunct = LCDP2;
 		gpioWrite(LEDB,ON);
 		gpioWrite(LEDR,OFF);
 		gpioWrite(LEDG,OFF);
@@ -187,6 +189,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 
 	case SET_P3:
 
+		pFunct = LCDP3;
 		gpioWrite(LED1,ON);
 		gpioWrite(LEDR,OFF);
 		gpioWrite(LEDG,OFF);

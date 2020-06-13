@@ -42,7 +42,7 @@ int main( void )
 	//delayInaccurateMs(1000);
 
 	LCDinit();
-	LCDhome();
+//	LCDhome();
 
 
 	controlMEFInit(&MEFF);
@@ -69,7 +69,7 @@ int main( void )
 			(const char *)"Tec1",     // Nombre de la tarea como String amigable para el usuario
 			configMINIMAL_STACK_SIZE*3, // Cantidad de stack de la tarea
 			&Buttons_SM[0],                 // Parametros de tarea
-			tskIDLE_PRIORITY+1,         // Prioridad de la tarea
+			tskIDLE_PRIORITY+2,         // Prioridad de la tarea
 			0                           // Puntero a la tarea creada en el sistema
 	);
 
@@ -79,7 +79,7 @@ int main( void )
 			(const char *)"Tec2",     // Nombre de la tarea como String amigable para el usuario
 			configMINIMAL_STACK_SIZE*3, // Cantidad de stack de la tarea
 			&Buttons_SM[1],                          // Parametros de tarea
-			tskIDLE_PRIORITY+1,         // Prioridad de la tarea
+			tskIDLE_PRIORITY+2,         // Prioridad de la tarea
 			0                           // Puntero a la tarea creada en el sistema
 	);
 
@@ -89,7 +89,7 @@ int main( void )
 			(const char *)"Tec3",     // Nombre de la tarea como String amigable para el usuario
 			configMINIMAL_STACK_SIZE*3, // Cantidad de stack de la tarea
 			&Buttons_SM[2],                         // Parametros de tarea
-			tskIDLE_PRIORITY+1,         // Prioridad de la tarea
+			tskIDLE_PRIORITY+2,         // Prioridad de la tarea
 			0                           // Puntero a la tarea creada en el sistema
 	);
 
@@ -99,14 +99,14 @@ int main( void )
 			(const char *)"MEF",     // Nombre de la tarea como String amigable para el usuario
 			configMINIMAL_STACK_SIZE*1, // Cantidad de stack de la tarea
 			0,                          // Parametros de tarea
-			tskIDLE_PRIORITY+1,         // Prioridad de la tarea
+			tskIDLE_PRIORITY+3,         // Prioridad de la tarea
 			0                           // Puntero a la tarea creada en el sistema
 	);
 
 	xTaskCreate(
 			Eventos,
 			(const char *)"Eventos",
-			configMINIMAL_STACK_SIZE*3,
+			configMINIMAL_STACK_SIZE,
 			0,
 			tskIDLE_PRIORITY+1,
 			0
@@ -150,16 +150,15 @@ void MEF( void* taskParmPtr ){
 
 void Eventos( void* taskParmPtr ){
 
-
-
-
+	portTickType xPeriodicity = 300 / portTICK_RATE_MS;
+	portTickType xLastWakeTime = xTaskGetTickCount();
 
 	while (TRUE)
 	{
 
-		LCDhome();
-		//pFunct();
-		//vTaskDelay( 1 /portTICK_RATE_MS );
+		pFunct();
+
+		vTaskDelayUntil(&xLastWakeTime, xPeriodicity);
 
 	}
 
