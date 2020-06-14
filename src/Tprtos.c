@@ -150,7 +150,7 @@ void MEF( void* taskParmPtr ){
 
 void Eventos( void* taskParmPtr ){
 
-	portTickType xPeriodicity = 300 / portTICK_RATE_MS;
+	portTickType xPeriodicity = 10 / portTICK_RATE_MS;
 	portTickType xLastWakeTime = xTaskGetTickCount();
 
 	while (TRUE)

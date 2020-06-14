@@ -106,6 +106,11 @@ enum{
 void LCDinit(void ){
 
 
+	contp1=0;
+	contp2=0;
+	contp3=0;
+	contp4=0;
+
 
 
 	lcdInit( 16, 2, 5, 8 );
@@ -127,92 +132,124 @@ void LCDinit(void ){
 
 
 void LCDhome(void){
+	if(contp1==20){
+		lcdGoToXY( 0, 0 );
+		lcdSendStringRaw( "BIENVENIDOS  AL" );
 
-
-	lcdGoToXY( 0, 0 );
-
-	lcdSendStringRaw( "BIENVENIDOS AL" );
-
-	lcdGoToXY( 0, 1 );
-	lcdSendStringRaw( "PROYECTO" );
+		lcdGoToXY( 0, 1 );
+		lcdSendStringRaw( "PROYECTO" );
 
 
 
-	lcdGoToXY( 11, 1 );
-	lcdData(PART1_CHAR);
-	//lcdData(PART7_CHAR);
-	lcdData(PART2_CHAR);
-	lcdData(PART3_CHAR);
-	lcdData(PART4_CHAR);
+		lcdGoToXY( 12, 1 );
+		lcdData(PART1_CHAR);
+		lcdData(PART2_CHAR);
+		lcdData(PART3_CHAR);
+		lcdData(PART4_CHAR);
+
+	}
+	//delayInaccurateMs(200);
+	if(contp1==40){
+		lcdClear();
+
+		lcdGoToXY( 0, 0 );
+		lcdSendStringRaw( "BIENVENIDOS  AL" );
+
+		lcdGoToXY( 0, 1 );
+		lcdSendStringRaw( "PROYECTO" );
+
+		lcdData(PART5_CHAR);
+
+		lcdGoToXY( 12, 1 );
+		lcdData(PART1_CHAR);
+		lcdData(PART2_CHAR);
+		lcdData(PART3_CHAR);
+		lcdData(PART4_CHAR);
+
+	}
+	//delayInaccurateMs(200);
+	if(contp1==60){
+		lcdClear();
+
+		lcdGoToXY( 0, 0 );
+		lcdSendStringRaw( "BIENVENIDOS  AL" );
+
+		lcdGoToXY( 0, 1 );
+		lcdSendStringRaw( "PROYECTO" );
+
+		lcdData(PART5_CHAR);
+		lcdData(PART5_CHAR);
+
+		lcdGoToXY( 12, 1 );
+		lcdData(PART1_CHAR);
+		lcdData(PART2_CHAR);
+		lcdData(PART3_CHAR);
+		lcdData(PART4_CHAR);
+
+	}
+	//delayInaccurateMs(200);
+	if(contp1==80){
+		lcdClear();
+
+		lcdGoToXY( 0, 0 );
+		lcdSendStringRaw( "BIENVENIDOS  AL" );
+
+		lcdGoToXY( 0, 1 );
+		lcdSendStringRaw( "PROYECTO" );
+
+		lcdData(PART5_CHAR);
+		lcdData(PART5_CHAR);
+		lcdData(PART5_CHAR);
+
+		lcdGoToXY( 12, 1 );
+		lcdData(PART1_CHAR);
+		lcdData(PART2_CHAR);
+		lcdData(PART3_CHAR);
+		lcdData(PART4_CHAR);
+
+	}
+	if(contp1==100){
+		lcdGoToXY( 0, 0 );
+		lcdSendStringRaw( "BIENVENIDOS  AL" );
+
+		lcdGoToXY( 0, 1 );
+		lcdSendStringRaw( "PROYECTO" );
+
+		lcdData(PART5_CHAR);
+		lcdData(PART5_CHAR);
+		lcdData(PART5_CHAR);
+		lcdData(PART5_CHAR);
+
+		lcdGoToXY( 12, 1 );
+		lcdData(PART1_CHAR);
+		lcdData(PART2_CHAR);
+		lcdData(PART3_CHAR);
+		lcdData(PART4_CHAR);
+
+	}
+	//delayInaccurateMs(200);
+	if(contp1==120){
+		lcdClear();
+
+		lcdGoToXY( 0, 0 );
+		lcdSendStringRaw( "BIENVENIDOS  AL" );
+
+		lcdGoToXY( 0, 1 );
+		lcdSendStringRaw( "PROYECTO" );
 
 
-	delayInaccurateMs(200);
-	lcdClear();
+		lcdGoToXY( 12, 1 );
+		lcdData(PART1_CHAR);
+		lcdData(PART2_CHAR);
+		lcdData(PART3_CHAR);
+		lcdData(PART4_CHAR);
 
-	lcdGoToXY( 0, 0 );
-	lcdSendStringRaw( "BIENVENIDOS AL" );
-	//lcdSendFloat(10,3);
-	//lcdSendInt(10);
+	}
 
-	lcdGoToXY( 0, 1 );
-	lcdSendStringRaw( "PROYECTO" );
+	if(contp1>120)contp1=0;
+	//	delayInaccurateMs(200);
 
-	lcdData(PART5_CHAR);
-
-
-	lcdGoToXY( 11, 1 );
-	lcdData(PART1_CHAR);
-	//lcdData(PART7_CHAR);
-	lcdData(PART2_CHAR);
-	lcdData(PART3_CHAR);
-	lcdData(PART4_CHAR);
-
-	//vTaskDelay(200/portTICK_RATE_MS);
-	delayInaccurateMs(200);
-	lcdClear();
-
-	lcdGoToXY( 0, 0 );
-	lcdSendStringRaw( "BIENVENIDOS AL" );
-
-	lcdGoToXY( 0, 1 );
-	lcdSendStringRaw( "PROYECTO" );
-
-	lcdData(PART5_CHAR);
-	lcdData(PART5_CHAR);
-
-	lcdGoToXY( 11, 1 );
-	lcdData(PART1_CHAR);
-	//lcdData(PART7_CHAR);
-	lcdData(PART2_CHAR);
-	lcdData(PART3_CHAR);
-	lcdData(PART4_CHAR);
-
-
-	delayInaccurateMs(200);
-
-	lcdClear();
-
-	lcdGoToXY( 0, 0 );
-	lcdSendStringRaw( "BIENVENIDOS AL" );
-
-	lcdGoToXY( 0, 1 );
-	lcdSendStringRaw( "PROYECTO" );
-
-	lcdData(PART5_CHAR);
-	lcdData(PART5_CHAR);
-	lcdData(PART5_CHAR);
-
-	lcdGoToXY( 11, 1 );
-	lcdData(PART1_CHAR);
-	//lcdData(PART7_CHAR);
-	lcdData(PART2_CHAR);
-	lcdData(PART3_CHAR);
-	lcdData(PART4_CHAR);
-
-
-	delayInaccurateMs(200);
-
-
+	contp1++;
 
 
 }
@@ -221,15 +258,34 @@ void LCDhome(void){
 void LCDP1(void)
 {
 
-	lcdClear();
-	lcdGoToXY( 0, 0 );
-	lcdSendStringRaw( "MEDICION DE " );
+	if(contp2==20){
+		lcdClear();
+		lcdGoToXY( 0, 0 );
+		lcdSendStringRaw( "TEMP CORPORAL *C" );
 
-	lcdGoToXY( 0, 1 );
-	lcdSendStringRaw( "TEMP CORPORAL " );
-	lcdData(PART7_CHAR);
+		lcdGoToXY( 0, 1 );
+		lcdData(PART1_CHAR);
+		lcdData(PART2_CHAR);
+		lcdData(PART3_CHAR);
+		lcdData(PART4_CHAR);
+		lcdGoToXY( 15, 1 );
+		lcdData(PART7_CHAR);
+	}
+	//delayInaccurateMs(200);
+	if(contp2==100){
+		lcdClear();
+		lcdGoToXY( 0, 0 );
+		lcdSendStringRaw( "TEMP CORPORAL *C" );
 
-
+		lcdGoToXY( 0, 1 );
+		lcdData(PART1_CHAR);
+		lcdData(PART2_CHAR);
+		lcdData(PART3_CHAR);
+		lcdData(PART4_CHAR);
+	}
+	//		delayInaccurateMs(200);
+	if(contp2>100)contp2=0;
+	contp2++;
 
 }
 
@@ -237,13 +293,37 @@ void LCDP1(void)
 void LCDP2(void)
 {
 
-	lcdClear();
-	lcdGoToXY( 0, 0 );
-	lcdSendStringRaw( "MEDICION DE" );
+	if(contp3==20){
+		lcdClear();
+		lcdGoToXY( 0, 0 );
+		lcdSendStringRaw( "*FREC  CARDIACA*" );
 
-	lcdGoToXY( 0, 1 );
-	lcdSendStringRaw( "FREC CARDIACA " );
-	lcdData(PART6_CHAR);
+		lcdGoToXY( 0, 1 );
+		lcdData(PART1_CHAR);
+		lcdData(PART2_CHAR);
+		lcdData(PART3_CHAR);
+		lcdData(PART4_CHAR);
+
+		lcdGoToXY( 15, 1 );
+		lcdData(PART6_CHAR);
+	}
+
+	//delayInaccurateMs(200);
+	if(contp3==100){
+		lcdClear();
+		lcdGoToXY( 0, 0 );
+		lcdSendStringRaw( "*FREC  CARDIACA*" );
+
+		lcdGoToXY( 0, 1 );
+		lcdData(PART1_CHAR);
+		lcdData(PART2_CHAR);
+		lcdData(PART3_CHAR);
+		lcdData(PART4_CHAR);
+	}
+	//		delayInaccurateMs(200);
+
+	if(contp3>100)contp3=0;
+	contp3++;
 
 
 
@@ -253,14 +333,19 @@ void LCDP2(void)
 void LCDP3(void)
 {
 
-	lcdClear();
-	lcdGoToXY( 0, 0 );
-	lcdSendStringRaw( "CONFIGURACION DE" );
+	if(contp4==20){
+		lcdClear();
+		lcdGoToXY( 0, 0 );
+		lcdSendStringRaw( "*CONFIG  SENSOR*" );
 
-	lcdGoToXY( 0, 1 );
-	lcdSendStringRaw( "SENSOR " );
-
-
+		lcdGoToXY( 0, 1 );
+		lcdData(PART1_CHAR);
+		lcdData(PART2_CHAR);
+		lcdData(PART3_CHAR);
+		lcdData(PART4_CHAR);
+	}
+	if(contp4>20)contp4=0;
+	contp4++;
 }
 
 

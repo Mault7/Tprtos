@@ -10,7 +10,10 @@
 
 #include "sapi.h"
 
-
+uint16_t contp1;
+uint16_t contp2;
+uint16_t contp3;
+uint16_t contp4;
 
 void LCDinit(void );
 void LCDhome(void);
