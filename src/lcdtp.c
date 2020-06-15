@@ -7,6 +7,7 @@
 
 #include "lcdtp.h"
 #include "sapi.h"
+#include "sensor.h"
 
 const char PART1[8] = {
 		0b00111,
@@ -111,7 +112,8 @@ void LCDinit(void ){
 	contp3=0;
 	contp4=0;
 
-
+	datosen.sensortemp=0;
+	datosen.senstofrec=0;
 
 	lcdInit( 16, 2, 5, 8 );
 
@@ -261,13 +263,19 @@ void LCDP1(void)
 	if(contp2==20){
 		lcdClear();
 		lcdGoToXY( 0, 0 );
-		lcdSendStringRaw( "TEMP CORPORAL *C" );
+		lcdSendStringRaw( "*TEMP  CORPORAL*" );
 
 		lcdGoToXY( 0, 1 );
 		lcdData(PART1_CHAR);
 		lcdData(PART2_CHAR);
 		lcdData(PART3_CHAR);
 		lcdData(PART4_CHAR);
+
+		lcdGoToXY( 5, 1 );
+		lcdSendStringRaw( "*C " );
+		lcdSendInt(datosen.sensortemp);
+
+
 		lcdGoToXY( 15, 1 );
 		lcdData(PART7_CHAR);
 	}
@@ -275,13 +283,19 @@ void LCDP1(void)
 	if(contp2==100){
 		lcdClear();
 		lcdGoToXY( 0, 0 );
-		lcdSendStringRaw( "TEMP CORPORAL *C" );
+		lcdSendStringRaw( "*TEMP  CORPORAL*" );
 
 		lcdGoToXY( 0, 1 );
 		lcdData(PART1_CHAR);
 		lcdData(PART2_CHAR);
 		lcdData(PART3_CHAR);
 		lcdData(PART4_CHAR);
+
+		lcdGoToXY( 5, 1 );
+		lcdSendStringRaw( "*C " );
+		lcdSendInt(datosen.sensortemp);
+
+
 	}
 	//		delayInaccurateMs(200);
 	if(contp2>100)contp2=0;
@@ -304,6 +318,12 @@ void LCDP2(void)
 		lcdData(PART3_CHAR);
 		lcdData(PART4_CHAR);
 
+
+		lcdGoToXY( 6, 1 );
+		lcdSendStringRaw( "BPM " );
+		lcdSendInt(datosen.senstofrec);
+
+
 		lcdGoToXY( 15, 1 );
 		lcdData(PART6_CHAR);
 	}
@@ -319,6 +339,11 @@ void LCDP2(void)
 		lcdData(PART2_CHAR);
 		lcdData(PART3_CHAR);
 		lcdData(PART4_CHAR);
+
+		lcdGoToXY( 6, 1 );
+		lcdSendStringRaw( "BPM " );
+		lcdSendInt(datosen.senstofrec);
+
 	}
 	//		delayInaccurateMs(200);
 

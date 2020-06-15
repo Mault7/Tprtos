@@ -10,6 +10,7 @@
 
 
 
+#include "sensor.h"
 #include "userTasks.h"
 #include "interrupciones.h"
 #include "queue.h"
@@ -21,6 +22,7 @@
 #include "board.h"
 #include "MEF.h"
 #include "lcdtp.h"
+#include "max30105.h"
 
 /*=====[Definition macros of private constants]==============================*/
 
@@ -28,26 +30,49 @@
 
 /*=====[Definitions of public global variables]==============================*/
 
+
+//===================== datos sensor max30105================================//
+uint8_t ledBrightness = 0x1F; //Options: 0=Off to 255=50mA
+uint8_t sampleAverage = 4; //Options: 1, 2, 4, 8, 16, 32
+uint8_t ledMode = 3; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
+int sampleRate = 400; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
+int pulseWidth = 411; //Options: 69, 118, 215, 411
+int adcRange = 4096; //Options: 2048, 4096, 8192, 16384
+sense_struct sense;
+//===========================================================================//
+
+//=================== datos para frecuencia cardiaca=========================//
+
+//==========================================================================//
+
+
 /*=====[Definitions of private global variables]=============================*/
-
+void uart(uint32_t dato){
+	char uartBuff[10];
+	itoa(dato,uartBuff,10);
+	uartWriteString( UART_USB, uartBuff );
+	uartWriteString( UART_USB, "\r\n" );
+}
 /*=====[Main function, program entry point after power on or reset]==========*/
-
+uint32_t countertick;
 int main( void )
 {
 	boardConfig();
 
 	// Create a task in freeRTOS with dynamic memory
 	My_IRQ_Init();
-
+	uartConfig(UART_USB,115200);
 	//delayInaccurateMs(1000);
 
 	LCDinit();
-//	LCDhome();
-
+	//	LCDhome();
+	i2cInit(I2C0,400000);
 
 	controlMEFInit(&MEFF);
 
-
+	setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
+	setPulseAmplitudeRed(0x0A);
+	setPulseAmplitudeGreen(0x0);
 
 
 
@@ -67,7 +92,7 @@ int main( void )
 	xTaskCreate(
 			Tecla,                     // Funcion de la tarea a ejecutar
 			(const char *)"Tec1",     // Nombre de la tarea como String amigable para el usuario
-			configMINIMAL_STACK_SIZE*3, // Cantidad de stack de la tarea
+			configMINIMAL_STACK_SIZE*1, // Cantidad de stack de la tarea
 			&Buttons_SM[0],                 // Parametros de tarea
 			tskIDLE_PRIORITY+2,         // Prioridad de la tarea
 			0                           // Puntero a la tarea creada en el sistema
@@ -77,7 +102,7 @@ int main( void )
 	xTaskCreate(
 			Tecla,                     // Funcion de la tarea a ejecutar
 			(const char *)"Tec2",     // Nombre de la tarea como String amigable para el usuario
-			configMINIMAL_STACK_SIZE*3, // Cantidad de stack de la tarea
+			configMINIMAL_STACK_SIZE*1, // Cantidad de stack de la tarea
 			&Buttons_SM[1],                          // Parametros de tarea
 			tskIDLE_PRIORITY+2,         // Prioridad de la tarea
 			0                           // Puntero a la tarea creada en el sistema
@@ -87,7 +112,7 @@ int main( void )
 	xTaskCreate(
 			Tecla,                     // Funcion de la tarea a ejecutar
 			(const char *)"Tec3",     // Nombre de la tarea como String amigable para el usuario
-			configMINIMAL_STACK_SIZE*3, // Cantidad de stack de la tarea
+			configMINIMAL_STACK_SIZE*1, // Cantidad de stack de la tarea
 			&Buttons_SM[2],                         // Parametros de tarea
 			tskIDLE_PRIORITY+2,         // Prioridad de la tarea
 			0                           // Puntero a la tarea creada en el sistema
@@ -106,14 +131,30 @@ int main( void )
 	xTaskCreate(
 			Eventos,
 			(const char *)"Eventos",
-			configMINIMAL_STACK_SIZE,
+			configMINIMAL_STACK_SIZE*1,
 			0,
 			tskIDLE_PRIORITY+1,
 			0
 	);
 
-
-
+	xTaskCreate(
+			Sensor,
+			(const char *)"Sensor",
+			configMINIMAL_STACK_SIZE*4,
+			0,
+			tskIDLE_PRIORITY+2,
+			0
+	);
+	/*
+	xTaskCreate(
+			Sensortemp,
+				(const char *)"Sensortemp",
+				configMINIMAL_STACK_SIZE*3,
+				0,
+				tskIDLE_PRIORITY+1,
+				0
+		);
+	 */
 
 	// Iniciar scheduler
 	if (0 == Error_state){
@@ -165,6 +206,43 @@ void Eventos( void* taskParmPtr ){
 }
 
 
+void Sensor( void* taskParmPtr ){
+
+
+	portTickType xPeriodicity = 1000 / portTICK_RATE_MS;
+	portTickType xLastWakeTime = xTaskGetTickCount();
 
 
 
+
+	while (TRUE){
+
+
+		//		check(&sense);
+		//		int32_t irValue=getFIFOIR(&sense);
+		uint8_t temp=readTemperature();
+
+		datosen.sensortemp=temp;
+
+		vTaskDelayUntil(&xLastWakeTime, xPeriodicity);
+	}
+}
+
+
+
+void Sensortemp( void* taskParmPtr ){
+
+
+	portTickType xPeriodicity = 1000 / portTICK_RATE_MS;
+	portTickType xLastWakeTime = xTaskGetTickCount();
+	while (TRUE){
+
+
+
+		uart(readTemperature());
+
+
+
+		vTaskDelayUntil(&xLastWakeTime, xPeriodicity);
+	}
+}

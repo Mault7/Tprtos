@@ -35,8 +35,8 @@ void tareas( void* taskParmPtr );
 void MEF( void* taskParmPtr );
 void Eventos( void* taskParmPtr );
 
-void SensorFrec( void* taskParmPtr );
-
+void Sensor( void* taskParmPtr );
+void Sensortemp( void* taskParmPtr );
 //void SensorFrec( void* taskParmPtr );
 
 //void debounce(void *taskParmPtr);
