@@ -40,7 +40,9 @@ int pulseWidth = 411; //Options: 69, 118, 215, 411
 int adcRange = 4096; //Options: 2048, 4096, 8192, 16384
 sense_struct sense;
 //===========================================================================//
-
+float y;
+float alpha=0.05;
+float s;
 //=================== datos para frecuencia cardiaca=========================//
 
 //==========================================================================//
@@ -124,7 +126,7 @@ int main( void )
 			(const char *)"MEF",     // Nombre de la tarea como String amigable para el usuario
 			configMINIMAL_STACK_SIZE*1, // Cantidad de stack de la tarea
 			0,                          // Parametros de tarea
-			tskIDLE_PRIORITY+3,         // Prioridad de la tarea
+			tskIDLE_PRIORITY+2,         // Prioridad de la tarea
 			0                           // Puntero a la tarea creada en el sistema
 	);
 
@@ -133,7 +135,7 @@ int main( void )
 			(const char *)"Eventos",
 			configMINIMAL_STACK_SIZE*1,
 			0,
-			tskIDLE_PRIORITY+1,
+			tskIDLE_PRIORITY+2,
 			0
 	);
 
@@ -145,7 +147,7 @@ int main( void )
 			tskIDLE_PRIORITY+2,
 			0
 	);
-	/*
+
 	xTaskCreate(
 			Sensortemp,
 				(const char *)"Sensortemp",
@@ -154,7 +156,6 @@ int main( void )
 				tskIDLE_PRIORITY+1,
 				0
 		);
-	 */
 
 	// Iniciar scheduler
 	if (0 == Error_state){
@@ -233,16 +234,17 @@ void Sensor( void* taskParmPtr ){
 void Sensortemp( void* taskParmPtr ){
 
 
-	portTickType xPeriodicity = 1000 / portTICK_RATE_MS;
-	portTickType xLastWakeTime = xTaskGetTickCount();
+
 	while (TRUE){
 
+		uint32_t irvalue=getIR(&sense);
+		y=(float)irvalue;
+		s=(alpha*y)+((1-alpha)*s);
+
+		uart(s);
 
 
-		uart(readTemperature());
 
-
-
-		vTaskDelayUntil(&xLastWakeTime, xPeriodicity);
+		vTaskDelay(15/portTICK_RATE_MS);
 	}
 }
