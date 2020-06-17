@@ -13,7 +13,7 @@
 #include "interrupciones.h"
 #include "MEF.h"
 #include "lcdtp.h"
-
+#include "sensor.h"
 
 static void actualizarsalidas(MEF_t * pMEF);
 
@@ -156,7 +156,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 		gpioWrite(LEDG,OFF);
 		gpioWrite(LEDB,OFF);
 		gpioWrite(LED1,OFF);
-
+		datosen.senstofrec=0;
 
 
 
@@ -164,7 +164,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 	case SET_P1:
 
 		pFunct = LCDP1;
-
+datosen.senstofrec=0;
 		gpioWrite(LEDG,ON);
 		gpioWrite(LEDR,OFF);
 		gpioWrite(LEDB,OFF);
@@ -188,7 +188,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 		break;
 
 	case SET_P3:
-
+datosen.senstofrec=0;
 		pFunct = LCDP3;
 		gpioWrite(LED1,ON);
 		gpioWrite(LEDR,OFF);

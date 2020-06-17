@@ -44,7 +44,8 @@ float y;
 float alpha=0.05;
 float s;
 //=================== datos para frecuencia cardiaca=========================//
-
+uint32_t timesample=0;
+bool_t accont=FALSE;
 //==========================================================================//
 
 
@@ -150,12 +151,12 @@ int main( void )
 
 	xTaskCreate(
 			Sensortemp,
-				(const char *)"Sensortemp",
-				configMINIMAL_STACK_SIZE*3,
-				0,
-				tskIDLE_PRIORITY+1,
-				0
-		);
+			(const char *)"Sensortemp",
+			configMINIMAL_STACK_SIZE*3,
+			0,
+			tskIDLE_PRIORITY+1,
+			0
+	);
 
 	// Iniciar scheduler
 	if (0 == Error_state){
@@ -218,6 +219,19 @@ void Sensor( void* taskParmPtr ){
 
 	while (TRUE){
 
+		if(accont==TRUE)
+		{
+			timesample++;
+			if(timesample>10)
+			{
+				frec.contfrec=(frec.contfrec*6)+27;
+				datosen.senstofrec=frec.contfrec;
+				timesample=0;
+				frec.contfrec=0;
+				accont=FALSE;
+			}
+		}
+
 
 		//		check(&sense);
 		//		int32_t irValue=getFIFOIR(&sense);
@@ -226,6 +240,8 @@ void Sensor( void* taskParmPtr ){
 		datosen.sensortemp=temp;
 
 		vTaskDelayUntil(&xLastWakeTime, xPeriodicity);
+
+
 	}
 }
 
@@ -235,16 +251,64 @@ void Sensortemp( void* taskParmPtr ){
 
 
 
+
+	int32_t temp;
+	frec.umbral=6000;
+	frec.statefrec=FRECRISING;
+
 	while (TRUE){
+
 
 		uint32_t irvalue=getIR(&sense);
 		y=(float)irvalue;
 		s=(alpha*y)+((1-alpha)*s);
+		int32_t diff=(int32_t)s;
 
-		uart(s);
+		temp=(int32_t)diff-(int32_t)120000;
+
+		//if(temp>0){
+		if(temp>0){
 
 
 
-		vTaskDelay(15/portTICK_RATE_MS);
+			switch(frec.statefrec)
+			{
+			case FRECRISING:
+
+				if(temp>frec.umbral)
+				{
+					frec.fcfalling=FALSE;
+					frec.fcrising=TRUE;
+				}
+				else
+				{
+					frec.statefrec=FRECFALLING;
+				}
+				break;
+
+			case FRECFALLING:
+
+				if(temp>frec.umbral)
+				{
+
+					frec.contfrec++;
+					frec.statefrec=FRECRISING;
+					uart(frec.contfrec);
+				}
+				break;
+			}
+		}
+
+			if(frec.contfrec!=0)
+			{
+				accont=TRUE;
+			}
+			else{
+				accont=FALSE;
+			}
+
+			uart(timesample);
+
+		vTaskDelay(16/portTICK_RATE_MS);
 	}
 }
