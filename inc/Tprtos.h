@@ -36,7 +36,10 @@ extern "C" {
 
 
 
-
+int get_ADC_range();
+void set_ADC_range(int range);
+int get_INT_range();
+void set_INT_range(int range);
 
 
 

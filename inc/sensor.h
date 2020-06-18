@@ -17,7 +17,7 @@ typedef struct
 }sensor_t;
 
 
-typedef enum {FRECRISING,FRECFALLING,}statefrec_t;
+typedef enum {FRECZERO,FRECNONZERO,}statefrec_t;
 
 
 typedef struct
@@ -25,8 +25,8 @@ typedef struct
 	uint32_t umbral;
 	statefrec_t statefrec;
 	uint8_t contfrec;
-	bool_t fcrising;
-	bool_t fcfalling;
+	bool_t fczero;
+	bool_t fcnonzero;
 
 }frec_t;
 

@@ -36,6 +36,7 @@ struct Lectura_t Lectura;
 MEF_t MEFF;
 
 void (*pFunct)(void);
+
 void  controlMEFInit(MEF_t * pMEF);
 void controlconfig(MEF_t * pMEF);
 

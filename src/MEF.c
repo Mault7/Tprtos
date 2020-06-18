@@ -14,8 +14,11 @@
 #include "MEF.h"
 #include "lcdtp.h"
 #include "sensor.h"
+#include "task.h"
+#include "uart.h"
 
 static void actualizarsalidas(MEF_t * pMEF);
+
 
 
 void controlMEFInit(MEF_t * pMEF){
@@ -117,7 +120,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 		gpioWrite(LEDG,OFF);
 		gpioWrite(LEDB,OFF);
 		gpioWrite(LED1,OFF);
-
+		uartInterrupt(UART_USB, false);
 
 
 
@@ -130,7 +133,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 		gpioWrite(LEDR,OFF);
 		gpioWrite(LEDB,OFF);
 		gpioWrite(LED1,OFF);
-
+		uartInterrupt(UART_USB, false);
 
 
 
@@ -144,7 +147,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 		gpioWrite(LEDR,OFF);
 		gpioWrite(LEDG,OFF);
 		gpioWrite(LED1,OFF);
-
+		uartInterrupt(UART_USB, false);
 
 
 		break;
@@ -157,8 +160,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 		gpioWrite(LEDR,OFF);
 		gpioWrite(LEDG,OFF);
 		gpioWrite(LEDB,OFF);
-
-
+		uartInterrupt(UART_USB, true);
 		break;
 
 

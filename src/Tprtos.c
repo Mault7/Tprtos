@@ -15,15 +15,16 @@
 #include "interrupciones.h"
 #include "queue.h"
 #include "task.h"
-#include "FreeRTOS.h"   //Motor del OS
-#include "semphr.h"		//Api de sincronizaciÃ³n (sem y mutex)
+#include "FreeRTOS.h"
+#include "semphr.h"
 #include "sapi.h"
 #include "FreeRTOSConfig.h"
 #include "board.h"
 #include "MEF.h"
 #include "lcdtp.h"
 #include "max30105.h"
-
+#include <string.h>
+#include "uart.h"
 /*=====[Definition macros of private constants]==============================*/
 
 /*=====[Definitions of extern global variables]==============================*/
@@ -43,6 +44,8 @@ sense_struct sense;
 float y;
 float alpha=0.05;
 float s;
+float alphaDC = 0.9;
+float w_prev = 0;
 //=================== datos para frecuencia cardiaca=========================//
 uint32_t timesample=0;
 bool_t accont=FALSE;
@@ -66,7 +69,7 @@ int main( void )
 	My_IRQ_Init();
 
 	//=========================configuracion de la UART==========================================//
-	uartConfig(UART_USB,115200);
+	uart_init();
 
 	//=========================Inicializacion del LCD============================================//
 	LCDinit();
@@ -98,42 +101,42 @@ int main( void )
 
 
 	xTaskCreate(
-			Tecla,                     // Funcion de la tarea a ejecutar
-			(const char *)"Tec1",     // Nombre de la tarea como String amigable para el usuario
-			configMINIMAL_STACK_SIZE*1, // Cantidad de stack de la tarea
-			&Buttons_SM[0],                 // Parametros de tarea
-			tskIDLE_PRIORITY+2,         // Prioridad de la tarea
-			0                           // Puntero a la tarea creada en el sistema
+			Tecla,
+			(const char *)"Tec1",
+			configMINIMAL_STACK_SIZE*1,
+			&Buttons_SM[0],
+			tskIDLE_PRIORITY+2,
+			0
 	);
 
 
 	xTaskCreate(
-			Tecla,                     // Funcion de la tarea a ejecutar
-			(const char *)"Tec2",     // Nombre de la tarea como String amigable para el usuario
-			configMINIMAL_STACK_SIZE*1, // Cantidad de stack de la tarea
-			&Buttons_SM[1],                          // Parametros de tarea
-			tskIDLE_PRIORITY+2,         // Prioridad de la tarea
-			0                           // Puntero a la tarea creada en el sistema
+			Tecla,
+			(const char *)"Tec2",
+			configMINIMAL_STACK_SIZE*1,
+			&Buttons_SM[1],
+			tskIDLE_PRIORITY+2,
+			0
 	);
 
 
 	xTaskCreate(
-			Tecla,                     // Funcion de la tarea a ejecutar
-			(const char *)"Tec3",     // Nombre de la tarea como String amigable para el usuario
-			configMINIMAL_STACK_SIZE*1, // Cantidad de stack de la tarea
-			&Buttons_SM[2],                         // Parametros de tarea
-			tskIDLE_PRIORITY+2,         // Prioridad de la tarea
-			0                           // Puntero a la tarea creada en el sistema
+			Tecla,
+			(const char *)"Tec3",
+			configMINIMAL_STACK_SIZE*1,
+			&Buttons_SM[2],
+			tskIDLE_PRIORITY+2,
+			0
 	);
 
 
 	xTaskCreate(
-			MEF,                     // Funcion de la tarea a ejecutar
-			(const char *)"MEF",     // Nombre de la tarea como String amigable para el usuario
-			configMINIMAL_STACK_SIZE*1, // Cantidad de stack de la tarea
-			0,                          // Parametros de tarea
-			tskIDLE_PRIORITY+2,         // Prioridad de la tarea
-			0                           // Puntero a la tarea creada en el sistema
+			MEF,
+			(const char *)"MEF",
+			configMINIMAL_STACK_SIZE*1,
+			0,
+			tskIDLE_PRIORITY+2,
+			0
 	);
 
 	xTaskCreate(
@@ -162,6 +165,15 @@ int main( void )
 			tskIDLE_PRIORITY+1,
 			0
 	);
+
+	xTaskCreate(
+			sensorconfig,
+			(const char *)"sensorconfig",
+			configMINIMAL_STACK_SIZE*2,
+			NULL,
+			tskIDLE_PRIORITY+3,
+			0
+			);
 
 
 
@@ -253,48 +265,52 @@ void Sensor( void* taskParmPtr ){
 void Sensortemp( void* taskParmPtr ){
 
 	int32_t temp;
-	frec.umbral=6000;
-	frec.statefrec=FRECRISING;
+	frec.statefrec=FRECZERO;
 
 	while (TRUE){
 
-
 		uint32_t irvalue=getIR(&sense);
 		y=(float)irvalue;
+		float w = y + alphaDC * w_prev;
+		y= w - w_prev;
+		w_prev = w;
+		y *= (-1);
 		s=(alpha*y)+((1-alpha)*s);
+		s -= 2500;
+		s = (s < 0)? 0 : s;
 		int32_t diff=(int32_t)s;
 
-		temp=(int32_t)diff-(int32_t)120000;
-
-		if(temp>0){
+		temp=(int32_t)diff;
 
 			switch(frec.statefrec)
 			{
-			case FRECRISING:
+			case FRECZERO:
 
-				if(temp>frec.umbral)
-				{
-					frec.fcfalling=FALSE;
-					frec.fcrising=TRUE;
+
+				if (frec.fczero){
+					frec.contfrec++;
 				}
-				else
+				frec.fcnonzero=TRUE;
+				frec.fczero=FALSE;
+
+				if ( temp > 0)
 				{
-					frec.statefrec=FRECFALLING;
+					frec.statefrec=FRECNONZERO;
 				}
 				break;
 
-			case FRECFALLING:
+			case FRECNONZERO:
 
-				if(temp>frec.umbral)
+				if(temp==0)
 				{
+					frec.fcnonzero=FALSE;
+					frec.fczero=TRUE;
+					frec.statefrec=FRECZERO;
 
-					frec.contfrec++;
-					frec.statefrec=FRECRISING;
-					uart(frec.contfrec);
 				}
 				break;
 			}
-		}
+
 
 		if(frec.contfrec!=0 && activacion==TRUE)
 		{
@@ -306,8 +322,33 @@ void Sensortemp( void* taskParmPtr ){
 			frec.contfrec=0;
 		}
 
-		uart(timesample);
-
 		vTaskDelay(16/portTICK_RATE_MS);
+
 	}
+}
+
+
+int get_ADC_range()
+{
+	return adcRange;
+}
+
+void set_ADC_range(int range)
+{
+	adcRange = range;
+	setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
+	setPulseAmplitudeRed(0x0A);
+	setPulseAmplitudeGreen(0x0);
+}
+
+int get_INT_range()
+{
+	return ledBrightness;
+}
+void set_INT_range(int range)
+{
+	ledBrightness = range;
+	setPulseAmplitudeIR(ledBrightness);
+	setPulseAmplitudeRed(0x0A);
+	setPulseAmplitudeGreen(0x0);
 }
