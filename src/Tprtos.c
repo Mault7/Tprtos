@@ -224,7 +224,7 @@ void Sensor( void* taskParmPtr ){
 			timesample++;
 			if(timesample>10)
 			{
-				frec.contfrec=(frec.contfrec*6)+27;
+				frec.contfrec=(frec.contfrec*6);
 				datosen.senstofrec=frec.contfrec;
 				timesample=0;
 				frec.contfrec=0;
