@@ -62,31 +62,36 @@ int main( void )
 {
 	boardConfig();
 
-	// Create a task in freeRTOS with dynamic memory
+	//=========================Inicializacion de las interrurciones==============================//
 	My_IRQ_Init();
-	uartConfig(UART_USB,115200);
-	//delayInaccurateMs(1000);
 
+	//=========================configuracion de la UART==========================================//
+	uartConfig(UART_USB,115200);
+
+	//=========================Inicializacion del LCD============================================//
 	LCDinit();
-	//	LCDhome();
+
+	//=========================iniciaalizacion del puerto i2c====================================//
 	i2cInit(I2C0,400000);
 
+	//=========================Inicializacion de la maquina de estados===========================//
 	controlMEFInit(&MEFF);
 
-	setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
+	//=========================Configuracion del sensor==========================================//
+	setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
 	setPulseAmplitudeRed(0x0A);
 	setPulseAmplitudeGreen(0x0);
 
 
 
-	//========================creacion de colas para capturar teclas===============================
+	//========================Creacion de colas para capturar teclas=============================//
 	for (int i = CANT_TECLAS ; i-- ; i >= 0) {
 		Buttons_SM[i].Tecla = i;
 		if (NULL == (Buttons_SM[i].Cola = xQueueCreate(3,sizeof(struct Button_Control)))){
 			Error_state =1;
 		}
 	}
-	//===================================Creamos cola de lecturas completadas ========================//
+	//===================================Creamos cola de lecturas completadas ===================//
 	if (NULL == (Cola_Lecturas = xQueueCreate(1,sizeof(struct Lectura_t)))){
 		Error_state =1;
 	}
@@ -158,7 +163,9 @@ int main( void )
 			0
 	);
 
-	// Iniciar scheduler
+
+
+
 	if (0 == Error_state){
 		printf("iniciando");
 	} else{
@@ -166,13 +173,11 @@ int main( void )
 	}
 
 
-	vTaskStartScheduler(); // Initialize scheduler
+	vTaskStartScheduler();
 
-	while( true ); // If reach heare it means that the scheduler could not start
+	while( TRUE );
 
-	// YOU NEVER REACH HERE, because this program runs directly or on a
-	// microcontroller and is not called by any Operating System, as in the
-	// case of a PC program.
+
 	return 0;
 
 }
@@ -224,6 +229,7 @@ void Sensor( void* taskParmPtr ){
 			timesample++;
 			if(timesample>10)
 			{
+				gpioWrite(LED3,OFF);
 				frec.contfrec=(frec.contfrec*6);
 				datosen.senstofrec=frec.contfrec;
 				timesample=0;
@@ -232,12 +238,9 @@ void Sensor( void* taskParmPtr ){
 			}
 		}
 
+		uint8_t temperatura=readTemperature();
 
-		//		check(&sense);
-		//		int32_t irValue=getFIFOIR(&sense);
-		uint8_t temp=readTemperature();
-
-		datosen.sensortemp=temp;
+		datosen.sensortemp=temperatura;
 
 		vTaskDelayUntil(&xLastWakeTime, xPeriodicity);
 
@@ -248,9 +251,6 @@ void Sensor( void* taskParmPtr ){
 
 
 void Sensortemp( void* taskParmPtr ){
-
-
-
 
 	int32_t temp;
 	frec.umbral=6000;
@@ -266,10 +266,7 @@ void Sensortemp( void* taskParmPtr ){
 
 		temp=(int32_t)diff-(int32_t)120000;
 
-		//if(temp>0){
 		if(temp>0){
-
-
 
 			switch(frec.statefrec)
 			{
@@ -299,15 +296,17 @@ void Sensortemp( void* taskParmPtr ){
 			}
 		}
 
-			if(frec.contfrec!=0)
-			{
-				accont=TRUE;
-			}
-			else{
-				accont=FALSE;
-			}
+		if(frec.contfrec!=0 && activacion==TRUE)
+		{
+			accont=TRUE;
+			gpioWrite(LED3,ON);
+		}
+		else{
+			accont=FALSE;
+			frec.contfrec=0;
+		}
 
-			uart(timesample);
+		uart(timesample);
 
 		vTaskDelay(16/portTICK_RATE_MS);
 	}

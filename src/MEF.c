@@ -35,12 +35,8 @@ void controlconfig(MEF_t * pMEF){
 		{
 		case PHOME:
 
-
-
 			if (PRESBTHOME==Lectura.Tecla){
 				pMEF->state=SET_P1;
-
-
 			}
 
 			break;
@@ -62,85 +58,49 @@ void controlconfig(MEF_t * pMEF){
 			}
 
 
-//			if (PRESBTHOME==Lectura.Tecla){
-//				pMEF->state=PHOME;
-//			}
-//			if(PRESBTUP==Lectura.Tecla){
-//				pMEF->state=SET_P2;
-//
-//			}
-//
-//			if(PRESBTDOWM==Lectura.Tecla){
-//				pMEF->state=SET_P3;
-//			}
-
 			break;
 
-		case SET_P2:
+			case SET_P2:
 
 
-			switch (Lectura.Tecla) {
-			case PRESBTHOME:
-				pMEF->state = PHOME;
-				break;
-			case PRESBTUP:
-				pMEF->state = SET_P3;
-				break;
-			case PRESBTDOWM:
-				pMEF->state = SET_P1;
-				break;
-			default:
-				break;
-			}
+				switch (Lectura.Tecla) {
+				case PRESBTHOME:
+					pMEF->state = PHOME;
+					break;
+				case PRESBTUP:
+					pMEF->state = SET_P3;
+					break;
+				case PRESBTDOWM:
+					pMEF->state = SET_P1;
+					break;
+				default:
+					break;
+				}
 
-			break;
-
-//			if(PRESBTHOME==Lectura.Tecla){
-//				pMEF->state=PHOME;
-//			}
-//			if(PRESBTUP==Lectura.Tecla){
-//				pMEF->state=SET_P3;
-//			}
-//
-//			if(PRESBTDOWM==Lectura.Tecla){
-//				pMEF->state=SET_P1;
-//			}
-//
-//			break;
-
-		case SET_P3:
-
-			switch (Lectura.Tecla) {
-			case PRESBTHOME:
-				pMEF->state = PHOME;
 				break;
-			case PRESBTUP:
-				pMEF->state = SET_P1;
-				break;
-			case PRESBTDOWM:
-				pMEF->state = SET_P2;
-				break;
-			default:
-				break;
-			}
 
-//			if(PRESBTHOME==Lectura.Tecla){
-//				pMEF->state=PHOME;
-//			}
-//
-//			if(PRESBTUP==Lectura.Tecla){
-//				pMEF->state=SET_P1;
-//			}
-//
-//			if(PRESBTDOWM==Lectura.Tecla){
-//				pMEF->state=SET_P2;
-//			}
-			break;
+
+				case SET_P3:
+
+					switch (Lectura.Tecla) {
+					case PRESBTHOME:
+						pMEF->state = PHOME;
+						break;
+					case PRESBTUP:
+						pMEF->state = SET_P1;
+						break;
+					case PRESBTDOWM:
+						pMEF->state = SET_P2;
+						break;
+					default:
+						break;
+					}
+
+					break;
 
 
 		}
 
-		//return TRUE;
 	}
 	actualizarsalidas(pMEF);
 }
@@ -152,11 +112,12 @@ static void actualizarsalidas(MEF_t * pMEF)
 	case PHOME:
 
 		pFunct = LCDhome;
+		activacion=FALSE;
 		gpioWrite(LEDR,ON);
 		gpioWrite(LEDG,OFF);
 		gpioWrite(LEDB,OFF);
 		gpioWrite(LED1,OFF);
-		datosen.senstofrec=0;
+
 
 
 
@@ -164,7 +125,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 	case SET_P1:
 
 		pFunct = LCDP1;
-datosen.senstofrec=0;
+		activacion=FALSE;
 		gpioWrite(LEDG,ON);
 		gpioWrite(LEDR,OFF);
 		gpioWrite(LEDB,OFF);
@@ -178,6 +139,7 @@ datosen.senstofrec=0;
 	case SET_P2:
 
 		pFunct = LCDP2;
+		activacion=TRUE;
 		gpioWrite(LEDB,ON);
 		gpioWrite(LEDR,OFF);
 		gpioWrite(LEDG,OFF);
@@ -188,8 +150,9 @@ datosen.senstofrec=0;
 		break;
 
 	case SET_P3:
-datosen.senstofrec=0;
+
 		pFunct = LCDP3;
+		activacion=FALSE;
 		gpioWrite(LED1,ON);
 		gpioWrite(LEDR,OFF);
 		gpioWrite(LEDG,OFF);

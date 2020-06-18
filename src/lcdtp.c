@@ -106,7 +106,6 @@ enum{
 };
 void LCDinit(void ){
 
-
 	contp1=0;
 	contp2=0;
 	contp3=0;
@@ -126,14 +125,14 @@ void LCDinit(void ){
 	lcdCreateChar( PART6_CHAR, PART6 );
 	lcdCreateChar( PART7_CHAR, PART7 );
 
-	lcdCursorSet( LCD_CURSOR_OFF ); // Apaga el cursor
-	lcdClear();                     // Borrar la pantalla
-
+	lcdCursorSet( LCD_CURSOR_OFF );
+	lcdClear();
 }
 
 
 
 void LCDhome(void){
+
 	if(contp1==20){
 		lcdGoToXY( 0, 0 );
 		lcdSendStringRaw( "BIENVENIDOS  AL" );
@@ -148,9 +147,8 @@ void LCDhome(void){
 		lcdData(PART2_CHAR);
 		lcdData(PART3_CHAR);
 		lcdData(PART4_CHAR);
-
 	}
-	//delayInaccurateMs(200);
+
 	if(contp1==40){
 		lcdClear();
 
@@ -167,9 +165,8 @@ void LCDhome(void){
 		lcdData(PART2_CHAR);
 		lcdData(PART3_CHAR);
 		lcdData(PART4_CHAR);
-
 	}
-	//delayInaccurateMs(200);
+
 	if(contp1==60){
 		lcdClear();
 
@@ -187,9 +184,8 @@ void LCDhome(void){
 		lcdData(PART2_CHAR);
 		lcdData(PART3_CHAR);
 		lcdData(PART4_CHAR);
-
 	}
-	//delayInaccurateMs(200);
+
 	if(contp1==80){
 		lcdClear();
 
@@ -208,8 +204,8 @@ void LCDhome(void){
 		lcdData(PART2_CHAR);
 		lcdData(PART3_CHAR);
 		lcdData(PART4_CHAR);
-
 	}
+
 	if(contp1==100){
 		lcdGoToXY( 0, 0 );
 		lcdSendStringRaw( "BIENVENIDOS  AL" );
@@ -227,9 +223,8 @@ void LCDhome(void){
 		lcdData(PART2_CHAR);
 		lcdData(PART3_CHAR);
 		lcdData(PART4_CHAR);
-
 	}
-	//delayInaccurateMs(200);
+
 	if(contp1==120){
 		lcdClear();
 
@@ -245,15 +240,10 @@ void LCDhome(void){
 		lcdData(PART2_CHAR);
 		lcdData(PART3_CHAR);
 		lcdData(PART4_CHAR);
-
 	}
 
 	if(contp1>120)contp1=0;
-	//	delayInaccurateMs(200);
-
 	contp1++;
-
-
 }
 
 
@@ -279,7 +269,7 @@ void LCDP1(void)
 		lcdGoToXY( 15, 1 );
 		lcdData(PART7_CHAR);
 	}
-	//delayInaccurateMs(200);
+
 	if(contp2==100){
 		lcdClear();
 		lcdGoToXY( 0, 0 );
@@ -297,7 +287,7 @@ void LCDP1(void)
 
 
 	}
-	//		delayInaccurateMs(200);
+
 	if(contp2>100)contp2=0;
 	contp2++;
 
@@ -328,7 +318,6 @@ void LCDP2(void)
 		lcdData(PART6_CHAR);
 	}
 
-	//delayInaccurateMs(200);
 	if(contp3==100){
 		lcdClear();
 		lcdGoToXY( 0, 0 );
@@ -345,13 +334,9 @@ void LCDP2(void)
 		lcdSendInt(datosen.senstofrec);
 
 	}
-	//		delayInaccurateMs(200);
 
 	if(contp3>100)contp3=0;
 	contp3++;
-
-
-
 }
 
 

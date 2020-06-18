@@ -13,16 +13,16 @@
 #include "queue.h"
 #include "semphr.h"
 #include "board.h"
-
-
-
+//===================================Declaracion de estados=======================//
 
 #define PRESBTUP	0
 #define PRESBTDOWM	1
 #define PRESBTHOME	2
 #define PRESBTEXIT	3
 
-;
+uint8_t activacion;
+
+//=================================================================================//
 typedef enum{PHOME,SET_P1,SET_P2,SET_P3,} MEFstate_t;
 
 typedef struct {
