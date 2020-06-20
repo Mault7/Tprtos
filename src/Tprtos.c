@@ -25,6 +25,8 @@
 #include "max30105.h"
 #include <string.h>
 #include "uart.h"
+
+
 /*=====[Definition macros of private constants]==============================*/
 
 /*=====[Definitions of extern global variables]==============================*/
@@ -87,14 +89,14 @@ int main( void )
 
 
 
-	//========================Creacion de colas para capturar teclas=============================//
+	//=================Creacion de colas para capturar teclas========================//
 	for (int i = CANT_TECLAS ; i-- ; i >= 0) {
 		Buttons_SM[i].Tecla = i;
 		if (NULL == (Buttons_SM[i].Cola = xQueueCreate(3,sizeof(struct Button_Control)))){
 			Error_state =1;
 		}
 	}
-	//===================================Creamos cola de lecturas completadas ===================//
+	//======================Creamos cola de lecturas completadas ===================//
 	if (NULL == (Cola_Lecturas = xQueueCreate(1,sizeof(struct Lectura_t)))){
 		Error_state =1;
 	}
@@ -149,8 +151,8 @@ int main( void )
 	);
 
 	xTaskCreate(
-			Sensor,
-			(const char *)"Sensor",
+			Sensortemp,
+			(const char *)"Sensortemp",
 			configMINIMAL_STACK_SIZE*4,
 			0,
 			tskIDLE_PRIORITY+2,
@@ -158,8 +160,8 @@ int main( void )
 	);
 
 	xTaskCreate(
-			Sensortemp,
-			(const char *)"Sensortemp",
+			Sensorfrec,
+			(const char *)"Sensorfrec",
 			configMINIMAL_STACK_SIZE*3,
 			0,
 			tskIDLE_PRIORITY+1,
@@ -173,7 +175,7 @@ int main( void )
 			NULL,
 			tskIDLE_PRIORITY+3,
 			0
-			);
+	);
 
 
 
@@ -225,7 +227,7 @@ void Eventos( void* taskParmPtr ){
 }
 
 
-void Sensor( void* taskParmPtr ){
+void Sensortemp( void* taskParmPtr ){
 
 
 	portTickType xPeriodicity = 1000 / portTICK_RATE_MS;
@@ -239,14 +241,16 @@ void Sensor( void* taskParmPtr ){
 		if(accont==TRUE)
 		{
 			timesample++;
-			if(timesample>10)
+			if(timesample>9)
 			{
 				gpioWrite(LED3,OFF);
-				frec.contfrec=(frec.contfrec*6);
-				datosen.senstofrec=frec.contfrec;
-				timesample=0;
-				frec.contfrec=0;
-				accont=FALSE;
+				if(timesample==11){
+					frec.contfrec=(frec.contfrec*6);
+					datosen.senstofrec=frec.contfrec;
+					timesample=0;
+					frec.contfrec=0;
+					accont=FALSE;
+				}
 			}
 		}
 
@@ -262,54 +266,67 @@ void Sensor( void* taskParmPtr ){
 
 
 
-void Sensortemp( void* taskParmPtr ){
+void Sensorfrec( void* taskParmPtr ){
 
 	int32_t temp;
 	frec.statefrec=FRECZERO;
 
 	while (TRUE){
 
+		//=========================== LECTURA DEL SENSOR ===================//
 		uint32_t irvalue=getIR(&sense);
+		//================================================================//
+
+		//=========================== Filtro Removal DC===================//
 		y=(float)irvalue;
 		float w = y + alphaDC * w_prev;
 		y= w - w_prev;
 		w_prev = w;
+		//================================================================//
+
+		//======================inversion de la senal==============================//
 		y *= (-1);
+		//================================================================//
+
+		//======================== Filtro de media movil====================//
 		s=(alpha*y)+((1-alpha)*s);
+		//================================================================//
+
+		//==========================Umbral de reduccion de la senal =====================//
 		s -= 2500;
+		//================================================================//
+
 		s = (s < 0)? 0 : s;
 		int32_t diff=(int32_t)s;
 
 		temp=(int32_t)diff;
 
-			switch(frec.statefrec)
+		switch(frec.statefrec)
+		{
+		case FRECZERO:
+
+
+
+			frec.fcnonzero=TRUE;
+			frec.fczero=FALSE;
+
+			if ( temp > 0)
 			{
-			case FRECZERO:
-
-
-				if (frec.fczero){
-					frec.contfrec++;
-				}
-				frec.fcnonzero=TRUE;
-				frec.fczero=FALSE;
-
-				if ( temp > 0)
-				{
-					frec.statefrec=FRECNONZERO;
-				}
-				break;
-
-			case FRECNONZERO:
-
-				if(temp==0)
-				{
-					frec.fcnonzero=FALSE;
-					frec.fczero=TRUE;
-					frec.statefrec=FRECZERO;
-
-				}
-				break;
+				frec.statefrec=FRECNONZERO;
 			}
+			break;
+
+		case FRECNONZERO:
+
+			if(temp==0)
+			{
+				frec.fcnonzero=FALSE;
+				frec.fczero=TRUE;
+				frec.statefrec=FRECZERO;
+				frec.contfrec++;
+			}
+			break;
+		}
 
 
 		if(frec.contfrec!=0 && activacion==TRUE)
@@ -320,6 +337,8 @@ void Sensortemp( void* taskParmPtr ){
 		else{
 			accont=FALSE;
 			frec.contfrec=0;
+			gpioWrite(LED3,OFF);
+
 		}
 
 		vTaskDelay(16/portTICK_RATE_MS);
@@ -327,12 +346,16 @@ void Sensortemp( void* taskParmPtr ){
 	}
 }
 
+//============ PETICION DEL VALOR ACTUAL EN EL ADC USANDO COMANDOS AT===========//
 
 int get_ADC_range()
 {
 	return adcRange;
 }
 
+//==============================================================================//
+
+//============ CONFIGURACION DEL ADC USANDO LOS COMANDOS AT USANDO COMANDOS AT===========//
 void set_ADC_range(int range)
 {
 	adcRange = range;
@@ -340,11 +363,19 @@ void set_ADC_range(int range)
 	setPulseAmplitudeRed(0x0A);
 	setPulseAmplitudeGreen(0x0);
 }
+//==============================================================================//
+
+//============ PETICION DEL VALOR ACTUAL DE LA INTESIODAD DE LUZ DEL SENSOR USANDO COMANDOS AT===========//
 
 int get_INT_range()
 {
 	return ledBrightness;
 }
+
+//==============================================================================//
+
+//============ CONFIGURACION DE LA INTENSIDAD DE LUZ USANDO COMANDOS AT===========//
+
 void set_INT_range(int range)
 {
 	ledBrightness = range;
@@ -352,3 +383,6 @@ void set_INT_range(int range)
 	setPulseAmplitudeRed(0x0A);
 	setPulseAmplitudeGreen(0x0);
 }
+
+//==============================================================================//
+

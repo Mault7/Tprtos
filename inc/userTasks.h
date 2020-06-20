@@ -31,15 +31,10 @@ extern "C" {
 /*=====[Prototypes (declarations) of public functions]=======================*/
 
 void tareas( void* taskParmPtr );
-// Task declaration
 void MEF( void* taskParmPtr );
 void Eventos( void* taskParmPtr );
-
-void Sensor( void* taskParmPtr );
 void Sensortemp( void* taskParmPtr );
-//void SensorFrec( void* taskParmPtr );
-
-//void debounce(void *taskParmPtr);
+void Sensorfrec( void* taskParmPtr );
 /*=====[Prototypes (declarations) of public interrupt functions]=============*/
 
 /*=====[C++ - end]===========================================================*/

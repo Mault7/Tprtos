@@ -15,15 +15,21 @@
 #include <stdlib.h>
 
 
+
+//================================CREACION DEL BUFFER=============================//
 #define LENGTH 20
 uint8_t buffuart[LENGTH];
 uint8_t length;
 bool_t new_cmd = false;
+//==============================================================================//
 
 SemaphoreHandle_t semauart;
 
+
+
 static void interruptuart(void *puart);
 static void parser(void);
+
 
 void uart_init(void)
 {
@@ -63,6 +69,8 @@ static void interruptuart(void *puart)
 	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
 
+//====================================TAREA DE LA UART============================//
+
 void sensorconfig(void *param)
 {
 	for (;;) {
@@ -71,6 +79,10 @@ void sensorconfig(void *param)
 	}
 
 }
+//==============================================================================//
+
+
+//=======================CONFIGURACION DE COMANDOS AT===========================//
 
 void parser(void)
 {
@@ -123,4 +135,5 @@ void parser(void)
 		}
 	}
 }
+//==============================================================================//
 

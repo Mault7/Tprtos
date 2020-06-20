@@ -114,6 +114,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 	{
 	case PHOME:
 
+		frec.contfrec=0;
 		pFunct = LCDhome;
 		activacion=FALSE;
 		gpioWrite(LEDR,ON);
@@ -126,7 +127,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 
 		break;
 	case SET_P1:
-
+		frec.contfrec=0;
 		pFunct = LCDP1;
 		activacion=FALSE;
 		gpioWrite(LEDG,ON);
@@ -153,7 +154,7 @@ static void actualizarsalidas(MEF_t * pMEF)
 		break;
 
 	case SET_P3:
-
+		frec.contfrec=0;
 		pFunct = LCDP3;
 		activacion=FALSE;
 		gpioWrite(LED1,ON);
